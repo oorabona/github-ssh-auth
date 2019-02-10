@@ -21,7 +21,6 @@ docs_require = []
 
 tests_require = [
     'flake8',
-    'flake8-future-import',
     'pytest',
     'pytest-cov',
     'coverage',
