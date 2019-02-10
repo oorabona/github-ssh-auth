@@ -1,5 +1,7 @@
 # GitHub-SSH-Auth
 
+[![Build Status](https://travis-ci.com/oorabona/github-ssh-auth.svg?branch=master)](https://travis-ci.com/oorabona/github-ssh-auth)
+
 # About
 
 This project aims to provide a way for `SSHd` to authenticate users on shell boxes using GitHub API v3 SSH keys of users in your organization.
@@ -65,6 +67,15 @@ The real application, handling all options, but for convenience the shortcuts de
 ### Usage
 
 ```
+Usage: github-ssh [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  auth    Authenticate user.
+  update  Update GitHub SSH Auth cache file (users, teams, keys).
 ```
 
 ## github-ssh-auth
@@ -74,6 +85,13 @@ Responsible for authentication itself, this one is to be called by `sshd` itself
 ### Usage
 
 ```
+Usage: github-ssh-auth [OPTIONS] LOGIN
+
+  Authenticate user.
+
+Options:
+  -c, --config TEXT
+  --help             Show this message and exit.
 ```
 
 ## github-ssh-update
@@ -83,6 +101,13 @@ Responsible for updating cache file, it can be scheduled to run periodicaly to e
 ### Usage
 
 ```
+Usage: github-ssh-update [OPTIONS]
+
+  Update GitHub SSH Auth cache file (users, teams, keys).
+
+Options:
+  -c, --config TEXT
+  --help             Show this message and exit.
 ```
 
 # Configuration
