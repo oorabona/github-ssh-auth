@@ -8,7 +8,7 @@ This project aims to provide a way for `SSHd` to authenticate users on shell box
 
 # How it works
 
-** *SSH Authentication against GitHub API* ** is done using a feature of `OpenSSH`, namely `AuthorizedKeysCommand` and `AuthorizedKeysCommandUser`.
+***SSH Authentication against GitHub API*** is done using a feature of `OpenSSH`, namely `AuthorizedKeysCommand` and `AuthorizedKeysCommandUser`.
 
 Everytime a user connects, the script will be called with the login as command line parameter.
 
@@ -31,7 +31,7 @@ So basically there are three possible outcomes:
 
 3. *User shall be granted access and user has keys*, they are given back to `sshd` to be processed further by `sshd` itself :+1:
 
-# Updating keys and cache use
+# Updating keys and cache use
 
 To avoid flooding GitHub API and consequently being temporarily banned from using them in case of massive connects, it is recommended to keep the cache enabled and update the keys only few times a day. The periodicity is yours and that is why there is a special `update` command line parameter for that.
 
@@ -50,7 +50,7 @@ Both will have the same outcome but the former is cleaner than the latter.
 
 All in all, choice is yours :wink:
 
-# Installation
+# Installation
 
 Since this Python module deals with SSH authentication, it should be installed globally, hence:
 
@@ -64,7 +64,7 @@ This will install the following program and its shortcuts:
 
 The real application, handling all options, but for convenience the shortcuts described after can be used.
 
-### Usage
+### Usage
 
 ```
 Usage: github-ssh [OPTIONS] COMMAND [ARGS]...
@@ -121,7 +121,7 @@ AuthorizedKeysCommand /usr/bin/github-ssh-auth -u %u
 AuthorizedKeysCommandUser nobody
 ```
 
-## GitHub token requirements
+## GitHub token requirements
 
 Since this application is dealing with some sensitive data (users and their team memberships) within an organization, we will need to create a so-called `Personal access tokens`.
 
