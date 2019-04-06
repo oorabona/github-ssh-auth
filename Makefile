@@ -46,11 +46,9 @@ coverage:
 	xdg-open htmlcov/index.html
 
 docs:
-	rm -f docs/click_tutorial.rst
-	rm -f docs/modules.rst
+	rm -f docs/*.rst
+	# cd docs && $(MAKE) $@
 	sphinx-apidoc -o docs/ github_ssh_auth
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
 	open docs/_build/html/index.html
 
 release: clean
