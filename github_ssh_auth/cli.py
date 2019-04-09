@@ -17,7 +17,7 @@ try:
 except ImportError:
     import ConfigParser
 
-from github import Github
+from github import Github, GithubException
 
 DEFAULT_FILENAME = os.path.join('/etc', 'github-ssh', 'conf')
 DEFAULT_CONFIG = u"""
@@ -63,7 +63,7 @@ def do_update(cache_file, access_token, organization):
         else:
             click.secho("Configuration file tells to not use cache, so nothing to be done.", fg='yellow')
     else:
-        click.secho("cache_file cannot be empty. Please refer to documentation.", fg='red')
+        click.secho("cache_file option in configuration file cannot be empty. Please refer to documentation.", fg='red')
 
     return retCode
 
@@ -158,8 +158,8 @@ def getKeysFromGitHub(access_token, organization):
         for m in org.get_members():
             for key in m.get_keys():
                 UsersCache['users'].setdefault(m.login, []).append(key.key)
-    except Exception:
-        click.secho("FATAL: Something went wrong when retrieving data from GitHub.", fg='red', bold=True)
+    except GithubException as exc:
+        click.secho("FATAL: Something went wrong when retrieving data from GitHub. (status = %s, data = %s)" % (exc.status, exc.data), fg='red', bold=True)
         sys.exit(1)
 
     return UsersCache
