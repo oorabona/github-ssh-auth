@@ -156,8 +156,9 @@ def getKeysFromGitHub(access_token, organization):
                 UsersCache['teams'].setdefault(t.name, []).append(m.login)
 
         for m in org.get_members():
+            UsersCache['users'].setdefault(m.login, [])
             for key in m.get_keys():
-                UsersCache['users'].setdefault(m.login, []).append(key.key)
+                UsersCache['users'][m.login].append(key.key)
     except GithubException as exc:
         click.secho("FATAL: Something went wrong when retrieving data from GitHub. (status = %s, data = %s)" % (exc.status, exc.data), fg='red', bold=True)
         sys.exit(1)
