@@ -56,7 +56,7 @@ class TestCliUpdate(unittest.TestCase):
 
     def test_update_no_cache_set_empty(self):
         result = self.runner.invoke(cli, ['update', '--config', 'test/empty_cache_file.cfg'])
-        assert 'cache_file cannot be empty. Please refer to documentation.' in result.output
+        assert 'cache_file option in configuration file cannot be empty. Please refer to documentation.' in result.output
         assert result.exit_code == 1
 
     def test_update_use_default_cache_file(self):
