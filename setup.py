@@ -44,7 +44,7 @@ setup(
     autosemver={
         'bugtracker_url': url + '/issues',
     },
-    version="0.9.0",
+    version="0.9.1",
     author="Olivier Orabona",
     author_email="olivier.orabona@gmail.com",
     description="Authenticate SSH users keys with GitHub",
