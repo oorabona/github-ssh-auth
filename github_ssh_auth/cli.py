@@ -175,14 +175,22 @@ def saveCache(cache_file, cache):
             sys.exit(1)
 
     with open(cache_file, 'w') as fcache:
-        json.dump(cache, fcache)
+        try:
+            json.dump(cache, fcache)
+        except (OSError, IOError) as exc:
+            click.secho("FATAL: could not write file '%s' (errno=%s) !" % (cache_file, exc.errno), fg='red')
+            sys.exit(1)
 
     return (len(cache['users'].keys()), len(cache['teams'].keys()))
 
 
 def loadCache(cache_file):
     with open(cache_file, 'r') as fcache:
-        return json.load(fcache)
+        try:
+            return json.load(fcache)
+        except (OSError, IOError) as exc:
+            click.secho("FATAL: could not read file '%s' (errno=%s) !" % (cache_file, exc.errno), fg='red')
+            sys.exit(1)
 
 
 @click.group()
