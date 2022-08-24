@@ -77,7 +77,7 @@ class TestCliUpdate(unittest.TestCase):
             result = self.runner.invoke(
                 cli, ['update', '-c', DEFAULT_CONFIGFILE])
             # print("RESULT: "+result.output)
-            assert 'Loading config file etc/github_ssh_auth/conf' in result.output
+            assert f"Loading config file etc{os.sep}github_ssh_auth{os.sep}conf" in result.output
             assert 'Saved' in result.output
             assert result.exit_code == 0
 

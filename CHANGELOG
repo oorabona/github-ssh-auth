@@ -1,3 +1,31 @@
+* 0.0.31 "Olivier ORABONA <oorabona@users.noreply.github.com>"
+    MINOR 7642f6b9: test: wip with secrets
+
+* 0.0.30 "Olivier ORABONA <oorabona@users.noreply.github.com>"
+    MINOR e49c7136: fix: disable pip version check
+
+* 0.0.29 "Olivier ORABONA <oorabona@users.noreply.github.com>"
+    MINOR 65d96918: test: import workflow from tox repo
+
+* 0.0.28 "Olivier ORABONA <oorabona@users.noreply.github.com>"
+    MINOR 13be206d: feat: initial commit :rocket: (autosemver)
+
+* 0.0.27 "Olivier ORABONA <oorabona@users.noreply.github.com>"
+    MINOR 8fe75fbf: chore: some cleanup done on unused stuff
+
+* 0.0.26 "Olivier ORABONA <oorabona@users.noreply.github.com>"
+    MINOR 577c1744: minor text fix + remove py2 support
+
+* 0.0.25 "Olivier ORABONA <oorabona@users.noreply.github.com>"
+    MINOR 3139eb97: feat: now using tox for lint/test/build/bundle and
+    autosemver for versionning
+
+* 0.0.24 "Olivier ORABONA <oorabona@users.noreply.github.com>"
+    MINOR 1916a8a8: chore: remove old pipeline and config file
+
+* 0.0.23 "Olivier ORABONA <oorabona@users.noreply.github.com>"
+    MINOR ecd990d2: chore: moving directory from  to
+
 * 0.0.22 "Olivier Orabona <oorabona@users.noreply.github.com>"
     MINOR 1b817dcc: :rocket: initial commit
 
