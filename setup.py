@@ -9,12 +9,15 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setup_requires = []
+setup_requires = [
+    'autosemver>=1.0.0',
+]
 
 install_requires = [
     'click>=7.0',
     'PyGithub>=1.2.0',
-    'configparser'
+    'configparser',
+    'autosemver>=1.0.0',
 ]
 
 docs_require = []
@@ -44,14 +47,14 @@ setup(
     autosemver={
         'bugtracker_url': url + '/issues',
     },
-    version="0.9.1",
     author="Olivier Orabona",
     author_email="olivier.orabona@gmail.com",
-    description="Authenticate SSH users keys with GitHub",
+    description="Authenticate SSH users using their GitHub keys",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url=url,
     packages=packages,
+    include_package_data=True,
     setup_requires=setup_requires,
     install_requires=install_requires,
     tests_require=tests_require,
