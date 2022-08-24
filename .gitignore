@@ -46,40 +46,17 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+*,cover
 
 # Translations
 *.mo
 *.pot
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
 # Sphinx documentation
 docs/_build/
 
-# PyBuilder
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
 # pyenv
 .python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
 
 # Environments
 .env
@@ -90,15 +67,26 @@ ENV/
 env.bak/
 venv.bak/
 
-# Spyder project settings
-.spyderproject
-.spyproject
+# packaging folders
+/src/tox/version.py
+/build/
+/dist/
+/src/tox.egg-info
 
-# Rope project settings
-.ropeproject
+# tox working folder
+/.tox
 
-# mkdocs documentation
-/site
+# IDEs
+/.idea
+/.vscode
 
-# mypy
-.mypy_cache/
+# tools
+/.*_cache
+
+# documentation
+/docs/_draft.rst
+
+# release
+credentials.json
+
+pip-wheel-metadata
