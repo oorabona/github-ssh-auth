@@ -12,10 +12,9 @@ import re
 from logging import debug, warning, error
 
 import click
-try:
-    import configparser
-except ImportError:
-    import ConfigParser
+
+# No need to support Python 2.x anymore.
+import configparser
 
 from github import Github, GithubException
 
@@ -54,7 +53,7 @@ def do_update(cache_file, access_token, organization):
     if len(cache_file) > 0:
         if cache_file != 'false':
             if len(access_token) == 0 or len(organization) == 0:
-                click.secho("FATAL: No credential set up to allow GitHub SSH Authication to work.", fg='red')
+                click.secho("FATAL: No credential set up to allow GitHub SSH Authentication to work.", fg='red')
                 click.secho("Run 'github_ssh_auth init' first.", fg='yellow', bold=True)
             else:
                 (userCount, teamCount) = saveCache(cache_file, getKeysFromGitHub(access_token, organization))
