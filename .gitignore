@@ -90,3 +90,4 @@ venv.bak/
 credentials.json
 
 pip-wheel-metadata
+github_ssh_auth/version.py
