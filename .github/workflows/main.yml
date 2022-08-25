@@ -210,22 +210,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up version
-        shell: python
-        run: |
-          import textwrap
-          import codecs
-          from setuptools import setup
-
-          version_py = textwrap.dedent(
-              """
-              # coding: utf-8
-              from __future__ import unicode_literals
-              __version__ = '{{ github.ref_name }}'
-              """
-          )
-          print("Setting version file to {}".format(version_py))
-          with codecs.open('github_ssh_auth/version.py', "a", "utf-8") as file_handler:
-              file_handler.write(version_py)
+        run: tox -e release
       - name: Build sdist and wheel
         run: python -m build -s -w . -o dist
       - name: Publish distribution 📦 to Test PyPI
