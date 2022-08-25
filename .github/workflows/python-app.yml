@@ -18,13 +18,16 @@ jobs:
       matrix:
         py:
           - "3.11.0-beta.5"
-          - "pypy-3.7-v7.3.9"  # ahead to start it earlier because takes longer
+          # Disabled until pynacl is fixed
+          # - "pypy-3.7-v7.3.9"  # ahead to start it earlier because takes longer
           - "3.10"
           - "3.9"
           - "3.8"
           - "3.7"
           - "3.6"
-          - "3.5"
+          # For now Python 3.5 seems to be the only one not working due to some obscure
+          # caching stuff + pip version upgrade issues.
+          # - "3.5"
         os:
           - ubuntu-20.04
           - macos-12
