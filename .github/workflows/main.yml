@@ -123,7 +123,6 @@ jobs:
           path: ".tox/.coverage.*"
 
   coverage:
-    if: false
     name: Combine coverage
     runs-on: ubuntu-22.04
     needs: test
@@ -148,8 +147,10 @@ jobs:
           name: coverage-data
           path: .tox
       - name: Combine and report coverage
+        if: false
         run: tox -e coverage
       - name: Upload HTML report
+        if: false
         uses: actions/upload-artifact@v3
         with:
           name: html-report
