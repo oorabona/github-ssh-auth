@@ -121,7 +121,7 @@ jobs:
           - windows-2022
         tox_env:
           - dev
-          - docs
+          # - docs
           - readme
         exclude:
           - { os: windows-2022, tox_env: readme }
