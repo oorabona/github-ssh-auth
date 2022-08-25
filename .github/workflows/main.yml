@@ -123,6 +123,7 @@ jobs:
           path: ".tox/.coverage.*"
 
   coverage:
+    if: false
     name: Combine coverage
     runs-on: ubuntu-22.04
     needs: test
@@ -195,7 +196,7 @@ jobs:
   publish:
     if: github.event_name == 'push'
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
-    needs: [ check, analyze ]
+    needs: [ check, coverage, analyze ]
     runs-on: ubuntu-22.04
     steps:
       - name: Setup python to build package
@@ -207,6 +208,23 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Set up version
+        shell: python
+        run: |
+          import textwrap
+          import codecs
+          from setuptools import setup
+
+          version_py = textwrap.dedent(
+              """
+              # coding: utf-8
+              from __future__ import unicode_literals
+              __version__ = '{{ github.ref_name }}'
+              """
+          )
+          print("Setting version file to {}".format(version_py))
+          with codecs.open('github_ssh_auth/version.py', "a", "utf-8") as file_handler:
+              file_handler.write(version_py)
       - name: Build sdist and wheel
         run: python -m build -s -w . -o dist
       - name: Publish distribution 📦 to Test PyPI
