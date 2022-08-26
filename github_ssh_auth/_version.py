@@ -80,7 +80,7 @@ def pep440_format(version_info):
         else:  # prefer PEP440 over strict adhesion to semver
             version_parts.append(".dev{}".format(dev))
 
-    if labels is not None:
+    if labels is not None and labels != "":
         version_parts.append("+{}".format(".".join(labels)))
 
     return "".join(version_parts)
