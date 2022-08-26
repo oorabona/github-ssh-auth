@@ -121,11 +121,7 @@ def get_version_from_git():
         release = "unknown"
         dev = None
 
-    labels = []
-    if dev == "0":
-        dev = None
-    else:
-        labels.append(git)
+    labels = [git]
 
     try:
         p = subprocess.Popen(["git", "diff", "--quiet"], cwd=package_root)
