@@ -1,7 +1,8 @@
-import textwrap
 import codecs
 import os
-from setuptools import setup
+import textwrap
+
+# from setuptools import setup
 
 gh_ref_name = os.getenv("GITHUB_REF_NAME")
 version_py = textwrap.dedent(

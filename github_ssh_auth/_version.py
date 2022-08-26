@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # This file is part of 'miniver': https://github.com/jbweston/miniver
 #
-from collections import namedtuple
 import os
 import subprocess
+from collections import namedtuple
 
 from setuptools.command.build_py import build_py as build_py_orig
 from setuptools.command.sdist import sdist as sdist_orig
@@ -28,6 +28,8 @@ def get_version(version_file=STATIC_VERSION_FILE):
             version = get_version_from_git_archive(version_info)
         if not version:
             version = Version("unknown", None, None)
+        if version.release == "unknown":
+            version = Version(os.getenv("GITHUB_REF_NAME"), version.dev, version.labels)
         return pep440_format(version)
     else:
         return version
@@ -132,8 +134,8 @@ def get_version_from_git_archive(version_info):
         return None
 
     VTAG = "tag: v"
-    refs = set(r.strip() for r in refnames.split(","))
-    version_tags = set(r[len(VTAG) :] for r in refs if r.startswith(VTAG))
+    refs = {r.strip() for r in refnames.split(",")}
+    version_tags = {r[len(VTAG) :] for r in refs if r.startswith(VTAG)}
     if version_tags:
         release, *_ = sorted(version_tags)  # prefer e.g. "2.0" over "2.0rc1"
         return Version(release, dev=None, labels=None)
@@ -157,10 +159,7 @@ def _write_version(fname):
     except OSError:
         pass
     with open(fname, "w") as f:
-        f.write(
-            "# This file has been created by setup.py.\n"
-            "version = '{}'\n".format(__version__)
-        )
+        f.write("# This file has been created by setup.py.\n" "version = '{}'\n".format(__version__))
 
 
 def get_cmdclass(pkg_source_path):
@@ -171,20 +170,14 @@ def get_cmdclass(pkg_source_path):
             src_marker = "".join(["src", os.path.sep])
 
             if pkg_source_path.startswith(src_marker):
-                path = pkg_source_path[len(src_marker):]
+                path = pkg_source_path[len(src_marker) :]
             else:
                 path = pkg_source_path
-            _write_version(
-                os.path.join(
-                    self.build_lib, path, STATIC_VERSION_FILE
-                )
-            )
+            _write_version(os.path.join(self.build_lib, path, STATIC_VERSION_FILE))
 
     class _sdist(sdist_orig):
         def make_release_tree(self, base_dir, files):
             super().make_release_tree(base_dir, files)
-            _write_version(
-                os.path.join(base_dir, pkg_source_path, STATIC_VERSION_FILE)
-            )
+            _write_version(os.path.join(base_dir, pkg_source_path, STATIC_VERSION_FILE))
 
     return dict(sdist=_sdist, build_py=_build_py)
