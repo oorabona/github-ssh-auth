@@ -26,10 +26,33 @@ def get_version(version_file=STATIC_VERSION_FILE):
         version = get_version_from_git()
         if not version:
             version = get_version_from_git_archive(version_info)
+        # If we can't get a version from git, use the default version.
         if not version:
             version = Version("unknown", None, None)
+
         if version.release == "unknown":
-            version = Version(os.getenv("GITHUB_REF_NAME"), version.dev, version.labels)
+            # this default_version comes from the _static_version.py file
+            default_version = version_info.get("default_version", "unknown")
+            # If the default version is a callable object (i.e. a function),
+            # if should return a Version object.
+            if callable(default_version):
+                default_version = default_version()
+                # Since two definitions of the same tuple object are not equal,
+                # we simply check if we have a tuple object.
+                if not (isinstance(default_version, tuple) or isinstance(default_version, str)):
+                    raise TypeError(
+                        "default_version must be a string, a Version or a callable "
+                        "that returns a Version object or a string."
+                    )
+
+            if isinstance(default_version, str):
+                version = Version(default_version, None, None)
+            else:
+                dev = default_version.dev if default_version.dev is not None else version.dev
+                labels = default_version.labels if default_version.labels is not None else version.labels
+                version = Version(default_version.release, dev, labels)
+
+        print("Setting version to {}".format(version))
         return pep440_format(version)
     else:
         return version
@@ -50,15 +73,15 @@ def pep440_format(version_info):
     release, dev, labels = version_info
 
     version_parts = [release]
-    if dev:
+    if dev is not None:
+        dev = str(dev)
         if release.endswith("-dev") or release.endswith(".dev"):
             version_parts.append(dev)
         else:  # prefer PEP440 over strict adhesion to semver
             version_parts.append(".dev{}".format(dev))
 
-    if labels:
-        version_parts.append("+")
-        version_parts.append(".".join(labels))
+    if labels is not None:
+        version_parts.append("+{}".format(".".join(labels)))
 
     return "".join(version_parts)
 
