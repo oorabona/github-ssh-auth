@@ -10,17 +10,18 @@ from collections import namedtuple
 
 Version = namedtuple("Version", ("release", "dev", "labels"))
 
-ref_name = os.getenv("GITHUB_REF_NAME")
+is_ci = os.getenv("CI")
 
 version = "__use_git__"
 # default_version = "0.0.0"
 
 
 def default_version():
-    global ref_name
+    global is_ci
     global Version
-    if ref_name is not None and ref_name != "":
-        return Version("0.0.0.dev", 0, [ref_name])
+    # Set local version when we have a branch (ref_name is not a tag)
+    if is_ci:
+        return Version("0.0.0.dev", 0, "")
     return Version("0.0.0.dev", 0, None)
 
 
