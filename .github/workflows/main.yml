@@ -210,7 +210,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up version
-        run: tox -e release
+        run: python release.py
       - name: Build sdist and wheel
         run: python -m build -s -w . -o dist
       - name: Publish distribution 📦 to Test PyPI
