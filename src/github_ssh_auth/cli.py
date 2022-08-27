@@ -16,6 +16,8 @@ from logging import debug
 import click
 from github import Github, GithubException
 
+from .version import __version__
+
 DEFAULT_FILENAME = os.path.join("/etc", "github-ssh", "conf")
 DEFAULT_CONFIG = """
 [env]
@@ -252,7 +254,7 @@ def loadCache(cache_file):
 
 
 @click.group()
-@click.version_option()
+@click.version_option(version=__version__)
 def cli():
     pass
 
