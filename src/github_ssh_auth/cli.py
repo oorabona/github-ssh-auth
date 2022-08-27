@@ -25,24 +25,53 @@ DEFAULT_CONFIG = """
 for key in os.environ.keys():
     DEFAULT_CONFIG += key + " = " + os.environ[key] + "\n"
 
-# Then add default parameters
 DEFAULT_CONFIG += """
 [global]
 cache_file = /etc/github-ssh/cache.json
 access_token =
 organization =
-
 teams_default =
 users_default =
 
-[teams]
-
 [users]
+
+[teams]
 """
 
-MARKER = """
-# Below are default values, please do not edit after this line as it will be ignored.
-# If you want to change them, please do it above.
+# Below is the default template for the configuration file.
+TPL_CONFIG_FILE = """
+# Comments should start with a # and must be full lines
+[global]
+# The following two lines are mandatory
+access_token = <token>
+organization = <org>
+
+# In case of connectivity lost and to prevent too many connections to GitHub API,
+# it is strongly recommended to set a cache file name.
+#
+# It must be an absolute filepath.
+# By default (when not present) it is set to /etc/github-ssh/cache.json and equivalent to:
+# cache_file = /etc/github-ssh/cache.json
+
+# If you want to disable (probably for good reasons), set it to 'false'
+# cache_file = [/path/to/file | false]
+
+# Unless overridden after, all users will have these configurations applied.
+# By default, nothing is set so basically no one will be granted access
+# The '<' case means that if a local exists with the same name as a GitHub user,
+# it will be granted access. It is a shorthand to avoid a too
+# complex, verbose yet common use case where every developer would
+# like to have his/her own shell account.
+teams_default = [ list,of,local,users,or,< ]
+users_default = [ list,of,local,users,or,< ]
+
+# Configuration below will override team defaults
+[teams]
+<team_name> = [ list,of,local,users,or,< ]
+
+# And below to override default users setup
+[users]
+<user_name> = [ list,of,local,users,or,< ]
 """
 
 
@@ -223,7 +252,7 @@ def cli():
 
 
 @cli.command()
-@click.option("-c", "--config", "configfile", default=DEFAULT_FILENAME, show_default=True)
+@click.option("-c", "--config", "configfile", default=DEFAULT_FILENAME, show_default=True, help="Config file to use.")
 def update(configfile):
     """
     Update GitHub SSH Auth cache file (users, teams, keys).
@@ -238,7 +267,7 @@ def update(configfile):
                 "FATAL: configuration file '%s' does not exist !" % configfile,
                 fg="red",
             )
-            click.secho("Run 'github_ssh_auth init' first.", fg="yellow", bold=True)
+            click.secho("Run 'github-ssh-init' first.", fg="yellow", bold=True)
             sys.exit(1)
 
     config = loadConfig(configfile)
@@ -251,24 +280,64 @@ def update(configfile):
     sys.exit(retCode)
 
 
-# @cli.command()
-# @click.option('-c', '--config', 'configfile', default=DEFAULT_FILENAME)
-# def init(configfile):
-#     """
-#     Initialize GitHub SSH Authentication configuration file.
-#     """
-#
-#     message = click.edit('\n' + MARKER + DEFAULT_CONFIG)
-#     if message is not None:
-#         click.secho(message.split(MARKER, 1)[0].rstrip('\n'))
-#
-#     click.secho('Wrote GitHub SSH Authentication configuration file : %s' % configfile, bold=True)
-#     sys.exit(0)
+@cli.command()
+@click.option(
+    "-c",
+    "--config",
+    "configfile",
+    default=DEFAULT_FILENAME,
+    show_default=True,
+    help="Config file to use.",
+    type=click.Path(dir_okay=False),
+)
+def init(configfile):
+    """
+    Initialize GitHub SSH Authentication configuration file.
+    """
+
+    filename = click.format_filename(configfile)
+
+    try:
+        os.makedirs(os.path.dirname(filename))
+    except OSError as exc:  # Guard
+        if exc.errno != errno.EEXIST:
+            click.secho(
+                "FATAL: cannot create directories for configuration file '%s' !" % filename,
+                fg="red",
+            )
+            sys.exit(1)
+
+    # Create config file with the default contents
+    try:
+        with click.open_file(filename, "w") as f:
+            f.write(TPL_CONFIG_FILE)
+            f.flush()
+
+        # In this configuration, with a filename, this always returns None
+        # so no need to check the return value
+        click.edit(
+            require_save=True,
+            filename=filename,
+        )
+
+        sys.exit(0)
+    except click.UsageError:
+        click.secho("FATAL: cannot edit configuration file '%s' !" % configfile, fg="red")
+        sys.exit(1)
+    except OSError as exc:
+        click.secho(
+            "FATAL: cannot write configuration file '{}' (errno={}) !".format(configfile, exc.errno),
+            fg="red",
+        )
+        sys.exit(1)
+    except Exception as exc:
+        click.secho("FATAL: {} for '{}' !".format(exc, configfile), fg="red")
+        sys.exit(1)
 
 
 @cli.command()
 @click.argument("login")
-@click.option("-c", "--config", "configfile", default=DEFAULT_FILENAME, show_default=True)
+@click.option("-c", "--config", "configfile", default=DEFAULT_FILENAME, show_default=True, help="Config file to use.")
 def auth(configfile, login):
     """Authenticate user."""
     config = loadConfig(configfile)
