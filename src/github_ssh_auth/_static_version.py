@@ -11,32 +11,31 @@ version = "__use_git__"
 
 def default_version():
     import os
-    import re
     from collections import namedtuple
 
     import requests
-    from packaging import version
+    from packaging.version import parse
+
+    Version = namedtuple("Version", ("release", "dev", "labels"))
 
     r = requests.get("https://test.pypi.org/pypi/github-ssh-auth/json")
     r.raise_for_status()
 
-    latest_version = r.json()["info"]["version"]
+    latest_version_str = r.json()["info"]["version"]
 
-    Version = namedtuple("Version", ("release", "dev", "labels"))
-
-    is_ci = os.getenv("CI")
+    is_ci = os.getenv("CI_RUN")
 
     # Set local version when we have a branch (ref_name is not a tag)
     if is_ci:
         # Get N in devN version string
-        result = re.search(version.VERSION_PATTERN, latest_version)
-        dev = result.group("dev") if result else None
+        latest_version = parse(latest_version_str)
+        dev = latest_version.dev
         # Increment dev version
         if dev:
             dev = int(dev) + 1
         else:
             dev = 0
-        return Version("0.0.0.dev", dev, "")
+        return Version(f"{latest_version.public}.dev", dev, "")
     return Version("0.0.0.dev", 0, None)
 
 
