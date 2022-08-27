@@ -255,3 +255,30 @@ class TestCliAuthUser(unittest.TestCase):
             result = self.runner.invoke(cli, ["auth", "nobody", "-c", DEFAULT_CONFIGFILE])
             assert len(result.output) == 1
             assert result.exit_code == 0
+
+    def test_bad_cache_file(self):
+        with self.runner.isolated_filesystem():
+            try:
+                os.makedirs(os.path.dirname(DEFAULT_CONFIGFILE))
+            except OSError as exc:  # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+            # Create a config file with environment variable interpolation (just for the test)
+            with open(DEFAULT_CONFIGFILE, "w") as f:
+                TEST_CONFIG = TPL_TEST_CONFIG.format(cache_file=DEFAULT_CACHEFILE)
+                TEST_CONFIG += "access_token = ${env:ACCESS_TOKEN}\n"
+                TEST_CONFIG += "organization = ${env:GITHUB_ORG}\n"
+                TEST_CONFIG += "users_default = <"
+                f.write(TEST_CONFIG)
+                f.close()
+
+            with open(DEFAULT_CACHEFILE, "w") as f:
+                f.write("not a json")
+                f.close()
+
+            result = self.runner.invoke(cli, ["auth", "oorabona", "-c", DEFAULT_CONFIGFILE])
+            # print('Test config: ' + TEST_CONFIG)
+            # print('Result: ' + result.output + '\nLen: '+str(countOutputKeys(result.output)))
+            self.assertEqual(result.exit_code, 1)
+            self.assertIn("could not parse JSON file", result.output)
