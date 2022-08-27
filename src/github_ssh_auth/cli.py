@@ -16,7 +16,10 @@ from logging import debug
 import click
 from github import Github, GithubException
 
-from .version import __version__
+try:
+    from .version import __version__
+except ImportError:
+    __version__ = None
 
 DEFAULT_FILENAME = os.path.join("/etc", "github-ssh", "conf")
 DEFAULT_CONFIG = """
