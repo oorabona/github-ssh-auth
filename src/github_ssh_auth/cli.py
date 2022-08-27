@@ -223,7 +223,7 @@ def cli():
 
 
 @cli.command()
-@click.option("-c", "--config", "configfile", default=DEFAULT_FILENAME)
+@click.option("-c", "--config", "configfile", default=DEFAULT_FILENAME, show_default=True)
 def update(configfile):
     """
     Update GitHub SSH Auth cache file (users, teams, keys).
@@ -268,7 +268,7 @@ def update(configfile):
 
 @cli.command()
 @click.argument("login")
-@click.option("-c", "--config", "configfile", default=DEFAULT_FILENAME)
+@click.option("-c", "--config", "configfile", default=DEFAULT_FILENAME, show_default=True)
 def auth(configfile, login):
     """Authenticate user."""
     config = loadConfig(configfile)
