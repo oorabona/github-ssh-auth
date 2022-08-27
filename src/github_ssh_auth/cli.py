@@ -18,7 +18,7 @@ from github import Github, GithubException
 
 try:
     from .version import __version__
-except ImportError:
+except ImportError:  # pragma: no cover
     __version__ = None
 
 DEFAULT_FILENAME = os.path.join("/etc", "github-ssh", "conf")
@@ -242,9 +242,9 @@ def loadCache(cache_file):
     with open(cache_file, "r") as fcache:
         try:
             return json.load(fcache)
-        except json.JSONDecodeError as exc:
+        except json.JSONDecodeError:
             click.secho(
-                "FATAL: could not parse JSON file '{}' !".format(cache_file, exc),
+                "FATAL: could not parse JSON file '{}' !".format(cache_file),
                 fg="red",
             )
             sys.exit(1)
@@ -322,7 +322,8 @@ def init(configfile, editor):
     except OSError as exc:
         if exc.errno == errno.EEXIST:
             click.secho(
-                "FATAL: configuration file '%s' already exists !" % filename, fg="red",
+                "FATAL: configuration file '%s' already exists !" % filename,
+                fg="red",
             )
             sys.exit(1)
         else:
@@ -348,10 +349,10 @@ def init(configfile, editor):
 
         click.secho("Configuration file '%s' created successfully." % filename, fg="green")
         sys.exit(0)
-    except click.UsageError: # pragma: no cover
+    except click.UsageError:  # pragma: no cover
         click.secho("FATAL: cannot edit configuration file '%s' !" % configfile, fg="red")
         sys.exit(1)
-    except OSError as exc: # pragma: no cover
+    except OSError as exc:  # pragma: no cover
         click.secho(
             "FATAL: cannot write configuration file '{}' (errno={}) !".format(configfile, exc.errno),
             fg="red",
