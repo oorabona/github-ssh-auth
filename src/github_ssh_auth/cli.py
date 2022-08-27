@@ -212,8 +212,8 @@ def getKeysFromGitHub(access_token, organization):
 def saveCache(cache_file, cache):
     try:
         os.makedirs(os.path.dirname(cache_file))
-    except OSError as exc:  # Guard against race condition
-        if exc.errno != errno.EEXIST:  # pragma: no cover
+    except OSError as exc:  # pragma: no cover
+        if exc.errno != errno.EEXIST:
             click.secho(
                 "FATAL: Could not create '{}' (errno={}).".format(cache_file, exc.errno),
                 fg="red",
@@ -223,7 +223,7 @@ def saveCache(cache_file, cache):
     with open(cache_file, "w") as fcache:
         try:
             json.dump(cache, fcache)
-        except OSError as exc:
+        except OSError as exc:  # pragma: no cover
             click.secho(
                 "FATAL: could not write file '{}' (errno={}) !".format(cache_file, exc.errno),
                 fg="red",
@@ -237,7 +237,13 @@ def loadCache(cache_file):
     with open(cache_file, "r") as fcache:
         try:
             return json.load(fcache)
-        except OSError as exc:
+        except json.JSONDecodeError as exc:
+            click.secho(
+                "FATAL: could not parse JSON file '{}' !".format(cache_file, exc),
+                fg="red",
+            )
+            sys.exit(1)
+        except OSError as exc:  # pragma: no cover
             click.secho(
                 "FATAL: could not read file '{}' (errno={}) !".format(cache_file, exc.errno),
                 fg="red",
@@ -290,7 +296,16 @@ def update(configfile):
     help="Config file to use.",
     type=click.Path(dir_okay=False),
 )
-def init(configfile):
+@click.option(
+    "-e",
+    "--editor",
+    "editor",
+    default="vim",
+    show_default=True,
+    help="Editor to use.",
+    # type=click.Path(dir_okay=False),
+)
+def init(configfile, editor):
     """
     Initialize GitHub SSH Authentication configuration file.
     """
@@ -299,8 +314,13 @@ def init(configfile):
 
     try:
         os.makedirs(os.path.dirname(filename))
-    except OSError as exc:  # Guard
-        if exc.errno != errno.EEXIST:
+    except OSError as exc:
+        if exc.errno == errno.EEXIST:
+            click.secho(
+                "FATAL: configuration file '%s' already exists !" % filename, fg="red",
+            )
+            sys.exit(1)
+        else:
             click.secho(
                 "FATAL: cannot create directories for configuration file '%s' !" % filename,
                 fg="red",
@@ -318,20 +338,19 @@ def init(configfile):
         click.edit(
             require_save=True,
             filename=filename,
+            editor=editor,
         )
 
+        click.secho("Configuration file '%s' created successfully." % filename, fg="green")
         sys.exit(0)
-    except click.UsageError:
+    except click.UsageError: # pragma: no cover
         click.secho("FATAL: cannot edit configuration file '%s' !" % configfile, fg="red")
         sys.exit(1)
-    except OSError as exc:
+    except OSError as exc: # pragma: no cover
         click.secho(
             "FATAL: cannot write configuration file '{}' (errno={}) !".format(configfile, exc.errno),
             fg="red",
         )
-        sys.exit(1)
-    except Exception as exc:
-        click.secho("FATAL: {} for '{}' !".format(exc, configfile), fg="red")
         sys.exit(1)
 
 
