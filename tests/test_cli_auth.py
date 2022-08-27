@@ -14,7 +14,7 @@ from click.testing import CliRunner
 from github_ssh_auth.cli import cli
 
 DEFAULT_CONFIGFILE = os.path.join("etc", "github_ssh_auth", "conf")
-DEFAULT_CACHEFILE = "etc/github_ssh_auth/test.json"
+DEFAULT_CACHEFILE = os.path.join("etc", "github_ssh_auth", "test.json")
 
 TEST_CONFIG = """
 [global]
