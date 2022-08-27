@@ -1,3 +1,5 @@
+import os
+
 from setuptools import setup
 
 
@@ -15,7 +17,7 @@ def get_version_and_cmdclass(pkg_path):
     return module.__version__, module.get_cmdclass(pkg_path)
 
 
-version, cmdclass = get_version_and_cmdclass("src/github_ssh_auth")
+version, cmdclass = get_version_and_cmdclass(f"src{os.sep}github_ssh_auth")
 
 setup(
     name="github_ssh_auth",
