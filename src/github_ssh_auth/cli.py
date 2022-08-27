@@ -263,7 +263,15 @@ def cli():
 
 
 @cli.command()
-@click.option("-c", "--config", "configfile", default=DEFAULT_FILENAME, show_default=True, help="Config file to use.")
+@click.option(
+    "-c",
+    "--config",
+    "configfile",
+    default=DEFAULT_FILENAME,
+    show_default=True,
+    help="Config file to use.",
+    type=click.Path(dir_okay=False),
+)
 def update(configfile):
     """
     Update GitHub SSH Auth cache file (users, teams, keys).
@@ -308,7 +316,7 @@ def update(configfile):
     default="vim",
     show_default=True,
     help="Editor to use.",
-    # type=click.Path(dir_okay=False),
+    type=click.Path(dir_okay=False),
 )
 def init(configfile, editor):
     """
@@ -362,7 +370,15 @@ def init(configfile, editor):
 
 @cli.command()
 @click.argument("login")
-@click.option("-c", "--config", "configfile", default=DEFAULT_FILENAME, show_default=True, help="Config file to use.")
+@click.option(
+    "-c",
+    "--config",
+    "configfile",
+    default=DEFAULT_FILENAME,
+    show_default=True,
+    help="Config file to use.",
+    type=click.Path(dir_okay=False),
+)
 def auth(configfile, login):
     """Authenticate user."""
     config = loadConfig(configfile)
