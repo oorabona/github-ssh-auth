@@ -6,7 +6,6 @@ __metaclass__ = type
 import unittest
 
 from click.testing import CliRunner
-from github import GithubException
 
 from github_ssh_auth.cli import cli
 
