@@ -4,6 +4,7 @@ on:
     branches: [master, 'test-me-*']
     tags: [v*]
   pull_request:
+    branches: [master, 'test-me-*']
 
 concurrency:
   group: check-${{ github.ref }}
