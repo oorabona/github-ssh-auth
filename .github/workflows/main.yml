@@ -81,7 +81,7 @@ jobs:
         os:
           - ubuntu-20.04
           - macos-12
-          - windows-2022
+          # - windows-2022
     steps:
       - name: Setup Vim for some tests
         uses: rhysd/action-setup-vim@v1
