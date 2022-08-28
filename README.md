@@ -1,14 +1,38 @@
 # GitHub-SSH-Auth
 
-[![Build Status](https://travis-ci.com/oorabona/github-ssh-auth.svg?branch=master)](https://travis-ci.com/oorabona/github-ssh-auth)
+[![CICD](https://github.com/oorabona/github-ssh-auth/actions/workflows/main.yml/badge.svg)](https://github.com/oorabona/github-ssh-auth/actions/workflows/main.yml)
+
+[![PyPI](https://img.shields.io/pypi/v/github-ssh-auth)](https://pypi.org/project/github-ssh-auth/)
+[![Supported Python
+versions](https://img.shields.io/pypi/pyversions/github-ssh-auth.svg)](https://pypi.org/project/github-ssh-auth/)
+[![Code style:
+black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Downloads](https://pepy.tech/badge/github-ssh-auth/month)](https://pepy.tech/project/github-ssh-auth/)
 
 # About
 
-This project aims to provide a way for `SSHd` to authenticate users on shell boxes using GitHub API v3 SSH keys of users in your organization.
+This project aims to provide a way for `SSH` daemon to authenticate your organization users on (standalone) shell boxes using their GitHub SSH keys.
 
 # How it works
 
 ***SSH Authentication against GitHub API*** is done using a feature of `OpenSSH`, namely `AuthorizedKeysCommand` and `AuthorizedKeysCommandUser`.
+
+These two options are used to specify the command to run and the user to run it as.
+If you are familiar with `authorized_keys` file, you can understand that each time you want to update keys, you have to first copy them using `ssh-copy-id` for example or any similar method.
+
+But what happens if you fail to copy keys? Or you have lost your keys because of computer crash? Or you have lost your keys because of some other reason?
+
+Then you have to update your keys again.
+And the process of updating keys on each of your running boxes is a nightmare.
+
+Of course, some companies have their own systems for this purpose.
+A possible solution would be to use a deployment service like `Ansible` or `Chef` to update keys on each box.
+
+Another possible solution would be to have some common infrastructure like `sssd` or `LDAP` to deport the authentication some place else, or to somewhat automagically update the keys upon valid logon credentials.
+
+This is not a solution for everyone.
+
+Therefore here is another technique that can help in such scenarios.
 
 Everytime a user connects, the script will be called with the login as command line parameter.
 
@@ -25,9 +49,11 @@ In detail, the following happens :
 
 The rest is handled by `sshd` itself, i.e. checking validity of that public key and the rest of the connection handling.
 
+> It does not interfere with the rest of the system, including anything PAM related.
+
 # Updating keys and cache use
 
-To avoid flooding GitHub API and consequently being temporarily banned from using their API in case of massive connects, it is recommended to keep the cache enabled and update the keys only few times a day. The periodicity is yours and that is why there is a special `update` command line parameter for that.
+To avoid flooding GitHub API and consequently being temporarily banned from using their API in case of massive connects, it is recommended to have cache enabled and update the keys only few times a day. The periodicity is yours and that is why there is a special `update` command line parameter for that.
 
 Consider the following scenario:
 - cache is enabled
@@ -60,7 +86,7 @@ The real application, handling all options, but for convenience the shortcuts de
 
 ### Usage
 
-```
+```shell
 Usage: github-ssh [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -69,6 +95,7 @@ Options:
 
 Commands:
   auth    Authenticate user.
+  init    Initialize GitHub SSH Authentication configuration file.
   update  Update GitHub SSH Auth cache file (users, teams, keys).
 ```
 
@@ -78,13 +105,33 @@ Responsible for authentication itself, this one is to be called by `sshd` itself
 
 ### Usage
 
-```
+```shell
 Usage: github-ssh-auth [OPTIONS] LOGIN
 
   Authenticate user.
 
 Options:
-  -c, --config TEXT
+  -c, --config FILE  Config file to use.  [default: /etc/github-ssh/conf]
+  --help             Show this message and exit.
+```
+
+## github-ssh-init
+
+This command initializes the configuration file.
+It will also launch an editor of your choice (or the one specified in `EDITOR` environment variable) to edit the configuration file.
+
+> Note: if the configuration file already exists, it will *NOT* be overwritten.
+
+### Usage
+
+```shell
+Usage: github-ssh-init [OPTIONS]
+
+  Initialize GitHub SSH Authentication configuration file.
+
+Options:
+  -c, --config FILE  Config file to use.  [default: /etc/github-ssh/conf]
+  -e, --editor FILE  Editor to use.  [default: vim]
   --help             Show this message and exit.
 ```
 
@@ -94,13 +141,13 @@ Responsible for updating cache file, it can be scheduled to run periodicaly to e
 
 ### Usage
 
-```
+```shell
 Usage: github-ssh-update [OPTIONS]
 
   Update GitHub SSH Auth cache file (users, teams, keys).
 
 Options:
-  -c, --config TEXT
+  -c, --config FILE  Config file to use.  [default: /etc/github-ssh/conf]
   --help             Show this message and exit.
 ```
 
@@ -127,7 +174,7 @@ To do that, fire up your GitHub organization dashboard, look for `Settings` then
 Then click on `Generate new token` and set its permissions to:
 > read:org
 
-This is the only requirement so that the API can be queried for users and teams memberships. All users keys are public by default an can be accessed from the outside world without authentication against GitHub API.
+This is the only requirement so that the API can be queried for users and teams memberships. All users keys are public by default and can be accessed from the outside world without authentication against GitHub API.
 
 See for yourself, go to `https://github.com/<yourhandle>.keys`. :rocket:
 
@@ -135,7 +182,7 @@ See for yourself, go to `https://github.com/<yourhandle>.keys`. :rocket:
 
 It resides by default in `/etc/github-ssh/conf` but of course you can change it using `-c` flag when calling (see above).
 
-The format is a standard INI style, as per `configparser`.
+The format is a standard INI style.
 
 ### Configuration file template
 
@@ -215,25 +262,13 @@ Some other ready-to-be-deployed-or-almost can be found in the `example` director
 # Testing
 
 As this is my first Python module, and even my first Python program ever, I tried different methods to handle testing.
-Having a lot of shortcomings with some of the tools in the ecosystem (`tox`, etc.) due to complexity and such I decided to give a go to Docker with Python installed and everything is done inside containers, which is *super fast*.
 
-So once you have `git clone`d the repository locally, you can see it for yourself by issuing a:
+Have had a lot of shortcomings four years ago when I started this project, now I found a way to test it properly using `tox` and `pytest`.
+Of course code is `coverage`-driven, so you can use `coverage` to get an idea of what is covered and what is not.
 
-```
-$ make help
-clean        - remove all build, test, coverage and Python artifacts
-clean-build  - remove build artifacts
-clean-pyc    - remove Python file artifacts
-clean-test   - remove test and coverage artifacts
-lint         - check style with flake8
-test         - run tests quickly with the default Python
-coverage     - check code coverage quickly with the default Python
-docs         - generate Sphinx HTML documentation, including API docs
-release      - package and upload a release
-test-release - package and upload a release to testpy repository
-dist         - package
-install      - install the package to the active Python's site-packages
-```
+An html report is also generated by `coverage` and can be found in `.tox/htmlcov/index.html`.
+
+I therefore removed the previous stack of tests using `Dockerfile` and `Makefile`.
 
 # Contributions
 
