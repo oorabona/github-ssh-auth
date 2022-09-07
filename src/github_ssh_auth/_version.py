@@ -117,6 +117,8 @@ def get_version_from_git():
 
     try:
         release, dev, hash = description
+        if dev == "0":
+            dev = None
     except ValueError:  # No tags, only the git hash
         # prepend 'g' to match with format returned by 'git describe'
         hash = "g{}".format(*description)
