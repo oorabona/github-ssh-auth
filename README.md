@@ -152,7 +152,7 @@ Options:
 ```
 
 > Note:
-In some distros, `/usr/local/bin` is not eligible for `sshd` daemon because of some obscure group permissions reason. Moving the binaries from `/usr/local/bin` to `/usr/bin` make them work like a charm !
+In some distros, `/usr/local/bin` is not eligible for `sshd` daemon because of some obscure group permissions reason. Moving the binaries (or create symlinks) from `/usr/local/bin` to `/usr/bin` make them work like a charm !
 
 # Configuration
 
@@ -164,6 +164,13 @@ These lines should be somewhere in your `sshd` configuration file. Usually in `/
 AuthorizedKeysCommand /usr/bin/github-ssh-auth %u
 AuthorizedKeysCommandUser nobody
 ```
+
+### What do they mean?
+
+The first line tells `sshd` to run `github-ssh-auth` with the username as command line parameter.
+As previously said, recent versions of `sshd` support `AuthorizedKeysCommand` option and only if command happens to live in `/usr/bin` not `/usr/local/bin`.
+
+The second line tells `sshd` to run `github-ssh-auth` under `nobody` user. This is to prevent any possible privilege escalation.
 
 ## GitHub token requirements
 
