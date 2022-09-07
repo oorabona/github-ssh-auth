@@ -18,12 +18,14 @@ package_name = os.path.basename(package_root)
 
 STATIC_VERSION_FILE = "_static_version.py"
 
+is_ci = os.getenv("CI", False)
 
 def get_version(version_file=STATIC_VERSION_FILE):
     version_info = get_static_version_info(version_file)
     version = version_info["version"]
     if version == "__use_git__":
         version = get_version_from_git()
+        print("Version from git: {}".format(version))
         if not version:
             version = get_version_from_git_archive(version_info)
         # If we can't get a version from git, use the default version.
@@ -80,7 +82,7 @@ def pep440_format(version_info):
         else:  # prefer PEP440 over strict adhesion to semver
             version_parts.append(".dev{}".format(dev))
 
-    if labels is not None and labels != "":
+    if not is_ci and labels is not None and labels != "":
         version_parts.append("+{}".format(".".join(labels)))
 
     return "".join(version_parts)
@@ -114,14 +116,14 @@ def get_version_from_git():
     )
 
     try:
-        release, dev, git = description
+        release, dev, hash = description
     except ValueError:  # No tags, only the git hash
         # prepend 'g' to match with format returned by 'git describe'
-        git = "g{}".format(*description)
+        hash = "g{}".format(*description)
         release = "unknown"
         dev = None
 
-    labels = [git]
+    labels = [hash]
 
     try:
         p = subprocess.Popen(["git", "diff", "--quiet"], cwd=package_root)
