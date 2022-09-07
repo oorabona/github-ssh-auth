@@ -68,10 +68,9 @@ env.bak/
 venv.bak/
 
 # packaging folders
-/src/tox/version.py
+/src/github_ssh_auth/version.py
 /build/
 /dist/
-/src/tox.egg-info
 
 # tox working folder
 /.tox
@@ -90,4 +89,3 @@ venv.bak/
 credentials.json
 
 pip-wheel-metadata
-github_ssh_auth/version.py
