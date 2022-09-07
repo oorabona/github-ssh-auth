@@ -27,7 +27,7 @@ def default_version():
     # latest_version_str = r.json()["info"]["version"]
     latest_version_str = [k for k in r.json()["releases"].keys()][-1]
 
-    is_ci = os.getenv("CI_RUN")
+    is_ci = os.getenv("CI", False)
 
     # Set local version when we have a branch (ref_name is not a tag)
     if is_ci:
