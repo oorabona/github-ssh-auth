@@ -113,7 +113,6 @@ jobs:
         env:
           GITHUB_ORG: ${{ secrets.GH_ORG }}
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          CI_RUN: "yes"
           PYTEST_ADDOPTS: "-vv --durations=20"
           DIFF_AGAINST: HEAD
       - name: Rename coverage report file
@@ -187,13 +186,11 @@ jobs:
         env:
           GITHUB_ORG: ${{ secrets.GH_ORG }}
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          CI_RUN: "yes"
       - name: Run test suite
         run: tox --skip-pkg-install -e ${{ matrix.tox_env }}
         env:
           GITHUB_ORG: ${{ secrets.GH_ORG }}
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          CI_RUN: "yes"
 
   publish:
     if: github.event_name == 'push'
@@ -212,8 +209,6 @@ jobs:
           fetch-depth: 0
       - name: Build sdist and wheel
         run: python -m build -s -w . -o dist
-        env:
-          CI_RUN: "yes"
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
