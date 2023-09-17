@@ -37,6 +37,7 @@ Therefore here is another technique that can help in such scenarios.
 Everytime a user connects, the script will be called with the login as command line parameter.
 
 In detail, the following happens :
+
 1. `sshd` deamon runs `github-ssh-auth` under the user defined by `AuthorizedKeysCommandUser` option.
 
 2. `github-ssh-auth` reads its configuration file (by default `/etc/github-ssh/conf`)
@@ -56,6 +57,7 @@ The rest is handled by `sshd` itself, i.e. checking validity of that public key 
 To avoid flooding GitHub API and consequently being temporarily banned from using their API in case of massive connects, it is recommended to have cache enabled and update the keys only few times a day. The periodicity is yours and that is why there is a special `update` command line parameter for that.
 
 Consider the following scenario:
+
 - cache is enabled
 - cache file already exists
 - a new user has joined the team OR an existing user replaced his/her keys
@@ -63,6 +65,7 @@ Consider the following scenario:
 In such case, the cache file will **NOT** be updated when authentication happens, this is the behavior set by design to separate concerns and prevent connection to the outside world being in the critical path for authentication.
 
 Instead, a locally defined `cron` should either:
+
 - call `github-ssh-update` to update cache
 - delete cache file (by default `/etc/github-ssh/cache.json`) which will force recreation when next auth happens
 
@@ -74,8 +77,8 @@ All in all, choice is yours :wink:
 
 Since this Python module deals with SSH authentication, it should be installed globally, hence:
 
-```
-$ sudo pip install github-ssh-auth
+```shell
+sudo pip install github-ssh-auth
 ```
 
 This will install the following program and its shortcuts in `/usr/local/bin`:
