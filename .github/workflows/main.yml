@@ -191,6 +191,10 @@ jobs:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
     needs: [ check, coverage, analyze ]
     runs-on: ubuntu-22.04
+    if: |
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
     steps:
       - name: Setup python to build package
         uses: actions/setup-python@v4
