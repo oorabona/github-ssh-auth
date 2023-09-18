@@ -1,8 +1,5 @@
-# -*- coding: utf8 -*-
 # Make coding more python3-ish
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
 
 import errno
 import json
@@ -192,8 +189,9 @@ class TestCliAuthUser(unittest.TestCase):
             # Create a config file with environment variable interpolation (just for the test)
             with open(DEFAULT_CONFIGFILE, "w") as f:
                 TEST_CONFIG = TPL_TEST_CONFIG.format(cache_file=DEFAULT_CACHEFILE)
-                TEST_CONFIG += "access_token = ${env:ACCESS_TOKEN}\n"
-                TEST_CONFIG += "organization = ${env:GITHUB_ORG}\n"
+                # Get environment variable
+                TEST_CONFIG += "access_token = " + os.environ.get("ACCESS_TOKEN") + "\n"
+                TEST_CONFIG += "organization = " + os.environ.get("GITHUB_ORG") + "\n"
                 TEST_CONFIG += "users_default = <"
                 f.write(TEST_CONFIG)
 
@@ -212,8 +210,8 @@ class TestCliAuthUser(unittest.TestCase):
                     raise
             with open(DEFAULT_CONFIGFILE, "w") as f:
                 TEST_CONFIG = TPL_TEST_CONFIG.format(cache_file="false")
-                TEST_CONFIG += "access_token = ${env:ACCESS_TOKEN}\n"
-                TEST_CONFIG += "organization = ${env:GITHUB_ORG}\n"
+                TEST_CONFIG += "access_token = " + os.environ.get("ACCESS_TOKEN") + "\n"
+                TEST_CONFIG += "organization = " + os.environ.get("GITHUB_ORG") + "\n"
                 TEST_CONFIG += "users_default = <"
                 f.write(TEST_CONFIG)
 
@@ -230,8 +228,8 @@ class TestCliAuthUser(unittest.TestCase):
                     raise
             with open(DEFAULT_CONFIGFILE, "w") as f:
                 TEST_CONFIG = TPL_TEST_CONFIG.format(cache_file=DEFAULT_CACHEFILE)
-                TEST_CONFIG += "access_token = ${env:ACCESS_TOKEN}\n"
-                TEST_CONFIG += "organization = ${env:GITHUB_ORG}\n"
+                TEST_CONFIG += "access_token = " + os.environ.get("ACCESS_TOKEN") + "\n"
+                TEST_CONFIG += "organization = " + os.environ.get("GITHUB_ORG") + "\n"
                 f.write(TEST_CONFIG)
 
             result = self.runner.invoke(cli, ["auth", "oorabona", "-c", DEFAULT_CONFIGFILE])
@@ -247,8 +245,8 @@ class TestCliAuthUser(unittest.TestCase):
                     raise
             with open(DEFAULT_CONFIGFILE, "w") as f:
                 TEST_CONFIG = TPL_TEST_CONFIG.format(cache_file=DEFAULT_CACHEFILE)
-                TEST_CONFIG += "access_token = ${env:ACCESS_TOKEN}\n"
-                TEST_CONFIG += "organization = ${env:GITHUB_ORG}\n"
+                TEST_CONFIG += "access_token = " + os.environ.get("ACCESS_TOKEN") + "\n"
+                TEST_CONFIG += "organization = " + os.environ.get("GITHUB_ORG") + "\n"
                 TEST_CONFIG += "users_default = <"
                 f.write(TEST_CONFIG)
 
@@ -267,8 +265,8 @@ class TestCliAuthUser(unittest.TestCase):
             # Create a config file with environment variable interpolation (just for the test)
             with open(DEFAULT_CONFIGFILE, "w") as f:
                 TEST_CONFIG = TPL_TEST_CONFIG.format(cache_file=DEFAULT_CACHEFILE)
-                TEST_CONFIG += "access_token = ${env:ACCESS_TOKEN}\n"
-                TEST_CONFIG += "organization = ${env:GITHUB_ORG}\n"
+                TEST_CONFIG += "access_token = " + os.environ.get("ACCESS_TOKEN") + "\n"
+                TEST_CONFIG += "organization = " + os.environ.get("GITHUB_ORG") + "\n"
                 TEST_CONFIG += "users_default = <"
                 f.write(TEST_CONFIG)
                 f.close()

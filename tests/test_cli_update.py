@@ -1,7 +1,5 @@
 # Make coding more python3-ish
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
 
 import errno
 import os
@@ -21,10 +19,8 @@ cache_file = {cache_file}
     cache_file=DEFAULT_CACHEFILE
 )
 
-TEST_CONFIG += """
-access_token = ${env:ACCESS_TOKEN}
-organization = ${env:GITHUB_ORG}
-"""
+TEST_CONFIG += "access_token = " + os.environ.get("ACCESS_TOKEN") + "\n"
+TEST_CONFIG += "organization = " + os.environ.get("GITHUB_ORG") + "\n"
 
 
 class TestCliUpdate(unittest.TestCase):
