@@ -9,28 +9,29 @@ versions](https://img.shields.io/pypi/pyversions/github-ssh-auth.svg)](https://p
 black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Downloads](https://pepy.tech/badge/github-ssh-auth/month)](https://pepy.tech/project/github-ssh-auth/)
 
-# About
+## About
 
-This project aims to provide a way for `SSH` daemon to authenticate your organization users on (standalone) shell boxes using their GitHub SSH keys.
+If you are familiar with `authorized_keys` file, each time you want to update keys, you have to first copy them using `ssh-copy-id` for example or any similar method.
 
-# How it works
+But what happens if you fail to copy keys? You might be locked out of your box.
 
-***SSH Authentication against GitHub API*** is done using a feature of `OpenSSH`, namely `AuthorizedKeysCommand` and `AuthorizedKeysCommandUser`.
+Same applies when you want to deploy your configuration on several machines, or when you want to update keys for a whole team.
+All these tasks are tedious and error-prone.
 
-These two options are used to specify the command to run and the user to run it as.
-If you are familiar with `authorized_keys` file, you can understand that each time you want to update keys, you have to first copy them using `ssh-copy-id` for example or any similar method.
-
-But what happens if you fail to copy keys? Or you have lost your keys because of computer crash? Or you have lost your keys because of some other reason?
-
-Then you have to update your keys again.
-And the process of updating keys on each of your running boxes is a nightmare.
-
-Of course, some companies have their own systems for this purpose.
-A possible solution would be to use a deployment service like `Ansible` or `Chef` to update keys on each box.
+`Ansible` or `Chef` can help but they are not always available or suitable for the task.
+They usually require some kind of infrastructure to work, and are designed for the whole system, not only for `SSH` authentication of potentially *some* users.
 
 Another possible solution would be to have some common infrastructure like `sssd` or `LDAP` to deport the authentication some place else, or to somewhat automagically update the keys upon valid logon credentials.
 
-This is not a solution for everyone.
+But what if you don't have such infrastructure? Or what if you don't want to have one?
+
+This is where this tool can help you out !
+
+## How it works
+
+This project provides a way for `SSH` daemon (aka `sshd`) to authenticate users from your organization using their GitHub SSH keys.
+
+`OpenSSH` has two options in its configuration file (e.g. `/etc/ssh/sshd.conf`), namely `AuthorizedKeysCommand` and `AuthorizedKeysCommandUser`. These two options are used to specify the command to run and the user to run it as.
 
 Therefore here is another technique that can help in such scenarios.
 
@@ -52,7 +53,7 @@ The rest is handled by `sshd` itself, i.e. checking validity of that public key 
 
 > It does not interfere with the rest of the system, including anything PAM related.
 
-# Updating keys and cache use
+## Updating keys and cache use
 
 To avoid flooding GitHub API and consequently being temporarily banned from using their API in case of massive connects, it is recommended to have cache enabled and update the keys only few times a day. The periodicity is yours and that is why there is a special `update` command line parameter for that.
 
@@ -73,7 +74,7 @@ Both will have the same outcome but the former is cleaner than the latter.
 
 All in all, choice is yours :wink:
 
-# Installation
+## Installation
 
 Since this Python module deals with SSH authentication, it should be installed globally, hence:
 
@@ -106,8 +107,6 @@ Commands:
 
 Responsible for authentication itself, this one is to be called by `sshd` itself.
 
-### Usage
-
 ```shell
 Usage: github-ssh-auth [OPTIONS] LOGIN
 
@@ -125,8 +124,6 @@ It will also launch an editor of your choice (or the one specified in `EDITOR` e
 
 > Note: if the configuration file already exists, it will *NOT* be overwritten.
 
-### Usage
-
 ```shell
 Usage: github-ssh-init [OPTIONS]
 
@@ -142,8 +139,6 @@ Options:
 
 Responsible for updating cache file, it can be scheduled to run periodicaly to ensure synchronization with updated keys from Github.
 
-### Usage
-
 ```shell
 Usage: github-ssh-update [OPTIONS]
 
@@ -157,13 +152,13 @@ Options:
 > Note:
 In some distros, `/usr/local/bin` is not eligible for `sshd` daemon because of some obscure group permissions reason. Moving the binaries (or create symlinks) from `/usr/local/bin` to `/usr/bin` make them work like a charm !
 
-# Configuration
+## Configuration
 
 ## SSH configuration in `/etc/ssh/sshd_config`
 
 These lines should be somewhere in your `sshd` configuration file. Usually in `/etc/ssh/sshd_config` :
 
-```
+```shell
 AuthorizedKeysCommand /usr/bin/github-ssh-auth %u
 AuthorizedKeysCommandUser nobody
 ```
@@ -269,7 +264,7 @@ bob = <
 
 Some other ready-to-be-deployed-or-almost can be found in the `example` directory.
 
-# Testing
+## Testing
 
 As this is my first Python module, and even my first Python program ever, I tried different methods to handle testing.
 
@@ -280,10 +275,10 @@ An html report is also generated by `coverage` and can be found in `.tox/htmlcov
 
 I therefore removed the previous stack of tests using `Dockerfile` and `Makefile`.
 
-# Contributions
+## Contributions
 
 Comments, issues, PR as :beer: will be warmly welcomed !
 
-# License
+## License
 
 GPLv3+
