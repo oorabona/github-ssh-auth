@@ -1,10 +1,10 @@
 name: CICD
 on:
   push:
-    branches: [master, 'test-me-*']
+    branches: [master, 'develop/*']
     tags: [v*]
   pull_request:
-    branches: [master, 'test-me-*']
+    branches: [master, 'develop']
 
 concurrency:
   group: check-${{ github.ref }}
