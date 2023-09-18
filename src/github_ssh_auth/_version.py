@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # This file is part of 'miniver': https://github.com/jbweston/miniver
 #
 import os
@@ -19,6 +18,7 @@ package_name = os.path.basename(package_root)
 STATIC_VERSION_FILE = "_static_version.py"
 
 is_ci = os.getenv("CI", False)
+
 
 def get_version(version_file=STATIC_VERSION_FILE):
     version_info = get_static_version_info(version_file)
