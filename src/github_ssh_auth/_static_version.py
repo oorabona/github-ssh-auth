@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # This file is part of 'miniver': https://github.com/jbweston/miniver
 #
 # The default value "__use_git__" is replaced by the actual version number

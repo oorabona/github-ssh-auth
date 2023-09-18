@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
-from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
 
 # No need to support Python 2.x anymore.
 import configparser
@@ -239,7 +236,7 @@ def saveCache(cache_file, cache):
 
 
 def loadCache(cache_file):
-    with open(cache_file, "r") as fcache:
+    with open(cache_file) as fcache:
         try:
             return json.load(fcache)
         except json.JSONDecodeError:
