@@ -186,7 +186,6 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
   publish:
-    if: github.event_name == 'push'
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
     needs: [ check, coverage, analyze ]
     runs-on: ubuntu-22.04
@@ -203,6 +202,7 @@ jobs:
       - name: Build sdist and wheel
         run: python -m build -s -w . -o dist
       - name: Publish distribution 📦 to Test PyPI
+        if: ${{ contains(fromJson('["refs/heads/develop", "refs/heads/master"]'), github.base_ref) }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
