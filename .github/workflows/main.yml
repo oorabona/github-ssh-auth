@@ -12,6 +12,8 @@ concurrency:
 
 jobs:
   analyze:
+    # Run only if pushing on master
+    if: github.ref_name == 'master' && github.event_name == 'push'
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
@@ -202,7 +204,7 @@ jobs:
       - name: Build sdist and wheel
         run: python -m build -s -w . -o dist
       - name: Publish distribution 📦 to Test PyPI
-        if: ${{ contains(fromJson('["refs/heads/develop", "refs/heads/master"]'), github.base_ref) }}
+        if: ${{ contains(fromJson('["develop", "master"]'), github.event.pull_request.base.ref) }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
