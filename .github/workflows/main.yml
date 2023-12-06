@@ -81,7 +81,7 @@ jobs:
       - name: Setup Vim for some tests
         uses: rhysd/action-setup-vim@v1
       - name: Setup python for github-ssh-auth
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       - name: Install tox
@@ -90,7 +90,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup python for test ${{ matrix.py }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.py }}
       - name: Pick environment to run
@@ -127,7 +127,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       - name: Install tox
@@ -171,7 +171,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Python "3.10"
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       - name: Install tox
@@ -197,7 +197,7 @@ jobs:
       !contains(needs.*.result, 'cancelled')
     steps:
       - name: Setup python to build package
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       - name: Install build
